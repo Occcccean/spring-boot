@@ -1,6 +1,6 @@
 package lingshin.meteor.web.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,7 +31,7 @@ public class Account {
 
   Integer failed_times;
 
-  Timestamp lock_time;
+  LocalDateTime lock_time;
 
-  Timestamp last_password_change_date;
+  LocalDateTime last_password_change_date;
 }
