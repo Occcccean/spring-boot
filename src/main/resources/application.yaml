@@ -1,1 +1,21 @@
-spring.application.name=课设
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/meteor
+    username: meteor
+    password: meteor
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 80
