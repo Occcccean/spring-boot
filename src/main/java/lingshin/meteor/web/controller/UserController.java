@@ -15,10 +15,11 @@ public class UserController {
   @Autowired
   AccountService accountService;
 
+  record UserDTO(String username, String password) {
+  }
+
   @PostMapping("/login")
-  public Account login(@RequestBody Map<String, String> requestParams) {
-    return accountService.login(
-        requestParams.get("username"),
-        requestParams.get("password"));
+  public Account login(@RequestBody UserDTO user) {
+    return accountService.login(user.username, user.password);
   }
 }

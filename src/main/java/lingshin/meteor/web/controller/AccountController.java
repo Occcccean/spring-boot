@@ -35,11 +35,8 @@ public class AccountController {
   @SneakyThrows
   @GetMapping("/{id}")
   public Account get(@PathVariable Integer id) {
-    var maybeAccount = accountService.getRepository().findById(id);
-    if (!maybeAccount.isPresent())
-      throw new WebException("没有这个账号");
-    return maybeAccount.get();
-
+    return accountService.getRepository().findById(id).orElseThrow(
+        () -> new WebException("没有这个账号"));
   }
 
   @DeleteMapping("/{id}")
