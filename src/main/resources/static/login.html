@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>研究生学籍管理系统 - 登录</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                primary: '#165DFF',
+                secondary: '#36BFFA',
+                accent: '#0D2B93',
+                light: '#F0F7FF',
+                success: '#10B981',
+                danger: '#EF4444',
+                warning: '#F59E0B'
+              },
+              fontFamily: {
+                inter: ['Inter', 'system-ui', 'sans-serif']
+              }
+            }
+          }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+          .content-auto {
+            content-visibility: auto;
+          }
+          .login-shadow {
+            box-shadow: 0 15px 30px rgba(22, 93, 255, 0.1);
+          }
+          .input-focus {
+            @apply focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all duration-300;
+          }
+          .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            background-color: #e5e7eb;
+            overflow: hidden;
+          }
+          .strength-bar {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+          }
+          .animate-float {
+            animation: float 6s ease-in-out infinite;
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+          }
+          .bg-pattern {
+            background-image:
+              radial-gradient(rgba(22, 93, 255, 0.05) 1px, transparent 1px),
+              radial-gradient(rgba(22, 93, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+          }
+        }
+    </style>
+</head>
+<body class="bg-pattern font-inter min-h-screen flex items-center justify-center p-4">
+<div class="w-full max-w-md">
+    <div class="bg-white rounded-2xl login-shadow p-8 relative overflow-hidden">
+        <!-- 装饰元素 -->
+        <div class="absolute -top-20 -right-20 w-64 h-64 bg-primary/5 rounded-full animate-float"></div>
+        <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-secondary/5 rounded-full animate-float" style="animation-delay: 2s"></div>
+
+        <!-- 系统标题 -->
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-graduation-cap text-primary text-2xl"></i>
+            </div>
+            <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-gray-900">研究生学籍管理系统</h1>
+            <p class="text-gray-500 mt-1">Higher Education Student Management System</p>
+        </div>
+
+        <!-- 登录表单 -->
+        <form id="loginForm" class="space-y-6">
+            <!-- 学号/用户名输入 -->
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700 mb-1">
+                    学号/用户名 <span class="text-danger">*</span>
+                </label>
+                <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+              <i class="fa fa-user"></i>
+            </span>
+                    <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 input-focus"
+                            placeholder="请输入学号或用户名"
+                            required
+                    >
+                </div>
+            </div>
+
+            <!-- 密码输入 -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1">
+                    密码 <span class="text-danger">*</span>
+                </label>
+                <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+              <i class="fa fa-lock"></i>
+            </span>
+                    <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="w-full pl-10 pr-12 py-3 rounded-lg border border-gray-300 input-focus"
+                            placeholder="请输入密码"
+                            required
+                    >
+                    <button
+                            type="button"
+                            id="togglePassword"
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                    >
+                        <i class="fa fa-eye-slash"></i>
+                    </button>
+                </div>
+
+                <!-- 密码强度提示 -->
+                <div class="mt-2">
+                    <div class="flex justify-between text-xs text-gray-500 mb-1">
+                        <span>密码强度</span>
+                        <span id="strengthText">未输入</span>
+                    </div>
+                    <div class="password-strength">
+                        <div id="strengthBar" class="strength-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="mt-2 text-xs text-gray-500">
+                        <p>密码需8位以上，包含数字、大小写字母和特殊字符</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 记住密码和忘记密码 -->
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input id="rememberMe" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                    <label for="rememberMe" class="ml-2 block text-sm text-gray-700">记住密码</label>
+                </div>
+                <a href="#" class="text-sm text-primary hover:text-primary/80">忘记密码?</a>
+            </div>
+
+            <!-- 登录按钮 -->
+            <button
+                    type="submit"
+                    class="w-full py-3 px-4 bg-primary text-white font-medium rounded-lg shadow-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all duration-300 flex items-center justify-center"
+            >
+                <i class="fa fa-sign-in mr-2"></i> 登录系统
+            </button>
+        </form>
+
+        <!-- 其他登录方式 -->
+        <div class="mt-8 text-center">
+            <p class="text-gray-500 text-sm">其他登录方式</p>
+            <div class="flex justify-center space-x-4 mt-4">
+                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors">
+                    <i class="fa fa-weixin"></i>
+                </button>
+                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors">
+                    <i class="fa fa-qq"></i>
+                </button>
+                <button class="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-primary hover:text-primary transition-colors">
+                    <i class="fa fa-id-card"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 版权信息 -->
+        <div class="mt-10 text-center text-gray-500 text-sm">
+            <p>© 2023 研究生学籍管理系统. 保留所有权利.</p>
+            <p class="mt-1">遵守等保三级安全标准 | 国密算法保护</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 密码显示/隐藏切换
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+
+        // 切换图标
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+      });
+
+      // 密码强度检测
+      const password = document.getElementById('password');
+      const strengthBar = document.getElementById('strengthBar');
+      const strengthText = document.getElementById('strengthText');
+
+      password.addEventListener('input', function() {
+        const pwd = this.value;
+        let strength = 0;
+        let text = '弱';
+        let color = '#EF4444'; // danger
+
+        // 密码长度检测
+        if (pwd.length >= 8) strength += 25;
+
+        // 包含数字
+        if (/[0-9]/.test(pwd)) strength += 25;
+
+        // 包含小写字母
+        if (/[a-z]/.test(pwd)) strength += 25;
+
+        // 包含大写字母
+        if (/[A-Z]/.test(pwd)) strength += 12.5;
+
+        // 包含特殊字符
+        if (/[^A-Za-z0-9]/.test(pwd)) strength += 12.5;
+
+        // 设置强度条
+        strengthBar.style.width = `${strength}%`;
+
+        // 设置强度文本和颜色
+        if (strength === 0) {
+          text = '未输入';
+          color = '#9CA3AF';
+        } else if (strength < 30) {
+          text = '弱';
+          color = '#EF4444';
+        } else if (strength < 60) {
+          text = '中';
+          color = '#F59E0B';
+        } else if (strength < 80) {
+          text = '强';
+          color = '#10B981';
+        } else {
+          text = '极强';
+          color = '#059669';
+        }
+
+        strengthText.textContent = text;
+        strengthBar.style.backgroundColor = color;
+      });
+
+      // 登录表单提交
+      const loginForm = document.getElementById('loginForm');
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // 简单前端验证
+        if (!username || !password) {
+          alert('请输入学号/用户名和密码');
+          return;
+        }
+
+        // 密码强度验证
+        const passwordStrength = strengthBar.style.width;
+        if (parseInt(passwordStrength) < 60) {
+          if (confirm('密码强度不足，是否继续登录？')) {
+            // 继续登录
+            doLogin(username, password);
+          }
+          return;
+        }
+
+        doLogin(username, password);
+      });
+
+      // 执行登录请求
+      function doLogin(username, password) {
+        // 显示加载状态
+        const loginBtn = loginForm.querySelector('button[type="submit"]');
+        const originalText = loginBtn.innerHTML;
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 登录中...';
+
+        // 模拟登录请求，实际应替换为真实API调用
+        fetch('http://47.96.254.64/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password
+          })
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('登录失败，请检查用户名和密码');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // 登录成功，跳转首页
+          localStorage.setItem('token', data.token || '');
+          localStorage.setItem('userInfo', JSON.stringify(data));
+          alert('登录成功！');
+          window.location.href = '/dashboard'; // 替换为实际首页地址
+        })
+        .catch(error => {
+          alert(error.message);
+        })
+        .finally(() => {
+          // 恢复按钮状态
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = originalText;
+        });
+      }
+    });
+</script>
+</body>
+</html>
