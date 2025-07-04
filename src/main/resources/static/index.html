@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>账户管理系统 | 现代化管理平台</title>
+    <title>账户管理系统 | 研究生学籍管理</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
@@ -21,7 +21,16 @@
                 success: '#10B981',
                 danger: '#EF4444',
                 warning: '#F59E0B',
-                info: '#6366F1'
+                info: '#6366F1',
+                'role-student': '#165DFF',      // 研究生
+                'role-mentor': '#10B981',       // 导师
+                'role-secretary': '#6366F1',     // 学院研究生秘书
+                'role-college-leader': '#F59E0B', // 学院领导
+                'role-student-manager': '#36BFFA', // 研究生院管理员
+                'role-student-leader': '#8B5CF6',   // 研究生院领导
+                'role-university-leader': '#10B981', // 学校领导
+                'role-system-manager': '#EF4444',   // 系统管理员
+                'role-auditor-manager': '#6B7280',  // 审计管理员
               },
               fontFamily: {
                 inter: ['Inter', 'system-ui', 'sans-serif']
@@ -67,6 +76,9 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
           }
+          .role-tag {
+            @apply px-2 py-1 text-xs font-semibold rounded-full flex items-center;
+          }
         }
     </style>
 </head>
@@ -81,8 +93,8 @@
                     <i class="fa fa-user-circle text-white text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-gray-900">账户管理系统</h1>
-                    <p class="text-xs text-gray-500">现代化账户管理平台</p>
+                    <h1 class="text-xl font-bold text-gray-900">研究生学籍管理系统</h1>
+                    <p class="text-xs text-gray-500">账户管理平台</p>
                 </div>
             </div>
 
@@ -109,7 +121,7 @@
                 <div class="relative">
                     <button class="flex items-center space-x-2 focus:outline-none" id="userMenuBtn">
                         <img src="https://picsum.photos/id/1005/40/40" alt="用户头像" class="w-8 h-8 rounded-full object-cover border-2 border-primary/20">
-                        <span class="hidden md:inline text-sm font-medium">管理员</span>
+                        <span class="hidden md:inline text-sm font-medium">系统管理员</span>
                         <i class="fa fa-chevron-down text-gray-400"></i>
                     </button>
 
@@ -286,9 +298,15 @@
                             <div class="relative">
                                 <select id="roleFilter" class="pl-4 pr-10 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none">
                                     <option value="all">所有角色</option>
-                                    <option value="user">普通用户</option>
-                                    <option value="admin">管理员</option>
-                                    <option value="manager">经理</option>
+                                    <option value="student">研究生</option>
+                                    <option value="mentor">导师</option>
+                                    <option value="secretary">学院研究生秘书</option>
+                                    <option value="college_leader">学院领导</option>
+                                    <option value="student_manager">研究生院管理员</option>
+                                    <option value="student_leader">研究生院领导</option>
+                                    <option value="university_leader">学校领导</option>
+                                    <option value="system_manager">系统管理员</option>
+                                    <option value="auditor_manager">审计管理员</option>
                                 </select>
                                 <i class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                             </div>
@@ -374,7 +392,7 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col md:flex-row justify-between items-center">
             <div class="mb-4 md:mb-0">
-                <p class="text-gray-500 text-sm">© 2023 账户管理系统. 保留所有权利.</p>
+                <p class="text-gray-500 text-sm">© 2023 研究生学籍管理系统. 保留所有权利.</p>
             </div>
             <div class="flex space-x-6">
                 <a href="#" class="text-gray-500 hover:text-primary transition-colors">
@@ -416,18 +434,23 @@
             </div>
 
             <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">密码</label>
-                <input type="password" id="password" name="password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                       placeholder="创建账户时必填，修改账户时可选">
+                <label for="password" class="block text-sm font-medium text-gray-700">密码 <span class="text-danger">*</span></label>
+                <input type="password" id="password" name="password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
                 <p class="text-xs text-gray-500 mt-1">至少8位，包含字母和数字</p>
             </div>
 
             <div>
                 <label for="role" class="block text-sm font-medium text-gray-700">角色 <span class="text-danger">*</span></label>
                 <select id="role" name="role" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
-                    <option value="user">普通用户</option>
-                    <option value="admin">管理员</option>
-                    <option value="manager">经理</option>
+                    <option value="student">研究生</option>
+                    <option value="mentor">导师</option>
+                    <option value="secretary">学院研究生秘书</option>
+                    <option value="college_leader">学院领导</option>
+                    <option value="student_manager">研究生院管理员</option>
+                    <option value="student_leader">研究生院领导</option>
+                    <option value="university_leader">学校领导</option>
+                    <option value="system_manager">系统管理员</option>
+                    <option value="auditor_manager">审计管理员</option>
                 </select>
             </div>
 
@@ -583,7 +606,7 @@
       });
     });
 
-    // 加载账户数据（优化版）
+    // 加载账户数据
     function loadAccounts() {
       const searchTerm = document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value;
       const status = document.getElementById('statusFilter').value;
@@ -602,7 +625,19 @@
       }
 
       if (role !== 'all') {
-        params.push(`role=${role}`);
+        // 将前端显示的角色转换为数据库中的角色代码
+        const roleMap = {
+          '研究生': 'student',
+          '导师': 'mentor',
+          '学院研究生秘书': 'secretary',
+          '学院领导': 'college_leader',
+          '研究生院管理员': 'student_manager',
+          '研究生院领导': 'student_leader',
+          '学校领导': 'university_leader',
+          '系统管理员': 'system_manager',
+          '审计管理员': 'auditor_manager'
+        };
+        params.push(`role=${roleMap[role] || role}`);
       }
 
       if (date) {
@@ -621,15 +656,13 @@
           return response.json();
         })
         .then(data => {
-          // 关键修复：确保数据为数组
+          // 确保数据为数组
           let accounts = [];
           if (Array.isArray(data)) {
             accounts = data;
           } else if (data && data.data && Array.isArray(data.data)) {
-            // 处理API返回 { data: [...] } 格式
             accounts = data.data;
           } else {
-            // 处理单个对象或其他格式
             accounts = [data];
           }
 
@@ -640,16 +673,15 @@
         .catch(error => {
           showNotification('错误', '加载账户数据失败：' + error.message, 'error');
           console.error('Error loading accounts:', error);
-          renderAccountsTable([]); // 加载失败时显示空列表
+          renderAccountsTable([]);
         });
     }
 
-    // 渲染账户表格（优化版）
+    // 渲染账户表格
     function renderAccountsTable(accounts) {
       const tableBody = document.getElementById('accountsTableBody');
       tableBody.innerHTML = '';
 
-      // 确保accounts是数组
       if (!Array.isArray(accounts)) {
         accounts = [];
       }
@@ -660,8 +692,8 @@
             <td colspan="7" class="px-6 py-4 text-center text-gray-500">没有找到账户记录</td>
           </tr>
         `;
-        updateAccountStats([]); // 更新统计数据
-        renderRecentAccounts([]); // 更新最近账户
+        updateAccountStats([]);
+        renderRecentAccounts([]);
         return;
       }
 
@@ -691,25 +723,53 @@
             statusText = '未知';
         }
 
-        // 角色标签样式
+        // 角色标签样式和文本
         let roleClass = '';
         let roleText = '';
 
-        switch(account.role || 'user') {
-          case 'admin':
-            roleClass = 'bg-primary/10 text-primary';
-            roleText = '管理员';
+        switch(account.role || 'student') {
+          case 'student':
+            roleClass = 'bg-role-student/10 text-role-student';
+            roleText = '研究生';
             break;
-          case 'manager':
-            roleClass = 'bg-info/10 text-info';
-            roleText = '经理';
+          case 'mentor':
+            roleClass = 'bg-role-mentor/10 text-role-mentor';
+            roleText = '导师';
+            break;
+          case 'secretary':
+            roleClass = 'bg-role-secretary/10 text-role-secretary';
+            roleText = '学院研究生秘书';
+            break;
+          case 'college_leader':
+            roleClass = 'bg-role-college-leader/10 text-role-college-leader';
+            roleText = '学院领导';
+            break;
+          case 'student_manager':
+            roleClass = 'bg-role-student-manager/10 text-role-student-manager';
+            roleText = '研究生院管理员';
+            break;
+          case 'student_leader':
+            roleClass = 'bg-role-student-leader/10 text-role-student-leader';
+            roleText = '研究生院领导';
+            break;
+          case 'university_leader':
+            roleClass = 'bg-role-university-leader/10 text-role-university-leader';
+            roleText = '学校领导';
+            break;
+          case 'system_manager':
+            roleClass = 'bg-role-system-manager/10 text-role-system-manager';
+            roleText = '系统管理员';
+            break;
+          case 'auditor_manager':
+            roleClass = 'bg-role-auditor-manager/10 text-role-auditor-manager';
+            roleText = '审计管理员';
             break;
           default:
             roleClass = 'bg-gray-100 text-gray-500';
-            roleText = '普通用户';
+            roleText = '未知角色';
         }
 
-        // 格式化日期（处理可能的日期格式问题）
+        // 格式化日期
         let createdDate = new Date();
         if (account.createTime) {
           createdDate = new Date(account.createTime);
@@ -741,12 +801,12 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.email || '未设置'}</td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${roleClass}">
+            <span class="role-tag ${roleClass}">
               ${roleText}
             </span>
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
-            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+            <span class="role-tag ${statusClass}">
               ${statusText}
             </span>
           </td>
@@ -764,21 +824,18 @@
         tableBody.appendChild(row);
       });
 
-      // 更新分页信息
       document.getElementById('showingRange').textContent = `1-${accounts.length}`;
       document.getElementById('totalCount').textContent = accounts.length;
     }
 
     // 更新账户统计信息
     function updateAccountStats(accounts) {
-      // 确保accounts是数组
       if (!Array.isArray(accounts)) {
         accounts = [];
       }
 
       document.getElementById('totalAccounts').textContent = accounts.length;
 
-      // 计算各类账户数量
       const activeAccounts = accounts.filter(account => account.status === 'active').length;
       const newAccounts = accounts.filter(account => {
         const createDate = new Date(account.createTime || account.createdAt || 0);
@@ -798,7 +855,6 @@
       const container = document.getElementById('recentAccounts');
       container.innerHTML = '';
 
-      // 确保accounts是数组
       if (!Array.isArray(accounts)) {
         accounts = [];
       }
@@ -812,9 +868,25 @@
         const item = document.createElement('div');
         item.className = 'flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors';
 
-        // 格式化最后活跃时间（使用当前时间模拟）
+        // 格式化最后活跃时间
         const lastActive = new Date(account.lastLogin || Date.now() - (Math.random() * 24 * 60 * 60 * 1000));
         const formattedTime = formatTimeAgo(lastActive);
+
+        // 角色标签
+        let roleClass = '';
+        let roleText = '';
+
+        switch(account.role || 'student') {
+          case 'student':
+            roleClass = 'bg-role-student/10 text-role-student text-xs';
+            roleText = '研究生';
+            break;
+          case 'mentor':
+            roleClass = 'bg-role-mentor/10 text-role-mentor text-xs';
+            roleText = '导师';
+            break;
+          // 其他角色...
+        }
 
         item.innerHTML = `
           <img src="https://picsum.photos/id/${account.id + 100}/40/40" alt="${account.username}" class="w-10 h-10 rounded-full object-cover">
@@ -822,8 +894,8 @@
             <h4 class="text-sm font-medium text-gray-800">${account.username || '未知用户'}</h4>
             <p class="text-xs text-gray-500">${formattedTime}</p>
           </div>
-          <span class="px-2 py-1 text-xs rounded-full ${account.status === 'active' ? 'bg-success/10 text-success' : 'bg-gray-100 text-gray-500'}">
-            ${account.status === 'active' ? '活跃' : '离线'}
+          <span class="px-2 py-1 ${roleClass} rounded-full">
+            ${roleText}
           </span>
         `;
 
@@ -839,7 +911,6 @@
       document.getElementById('modalTitle').textContent = title;
       modal.classList.remove('hidden');
 
-      // 触发动画
       setTimeout(() => {
         modalContent.classList.remove('scale-95', 'opacity-0');
         modalContent.classList.add('scale-100', 'opacity-100');
@@ -868,7 +939,6 @@
       document.getElementById('deleteMessage').textContent = `您确定要删除ID为 ${id} 的账户吗？此操作不可撤销。`;
       modal.classList.remove('hidden');
 
-      // 触发动画
       setTimeout(() => {
         modalContent.classList.remove('scale-95', 'opacity-0');
         modalContent.classList.add('scale-100', 'opacity-100');
@@ -902,7 +972,7 @@
           document.getElementById('accountId').value = account.id;
           document.getElementById('username').value = account.username || '';
           document.getElementById('email').value = account.email || '';
-          document.getElementById('role').value = account.role || 'user';
+          document.getElementById('role').value = account.role || 'student';
           document.getElementById('status').value = account.status || 'active';
           document.getElementById('password').required = false;
         })
@@ -928,7 +998,6 @@
         status
       };
 
-      // 如果是创建账户或者填写了密码，则包含密码字段
       if (password || !id) {
         accountData.password = password;
       }
@@ -986,30 +1055,41 @@
 
     // 初始化图表
     function initCharts() {
-      // 账户类型分布图表
       const typeCtx = document.getElementById('accountTypeChart').getContext('2d');
 
-      // 使用模拟数据，实际应用中应从API获取
+      // 模拟数据，实际应用中应从API获取
       const typeData = {
-        labels: ['普通用户', '管理员', '经理'],
+        labels: ['研究生', '导师', '学院研究生秘书', '学院领导', '研究生院管理员', '研究生院领导', '学校领导', '系统管理员', '审计管理员'],
         datasets: [{
-          data: [70, 20, 10],
+          data: [60, 20, 5, 3, 5, 2, 2, 1, 2],
           backgroundColor: [
-            'rgba(22, 93, 255, 0.8)',
-            'rgba(54, 191, 250, 0.8)',
-            'rgba(99, 102, 241, 0.8)'
+            'rgba(22, 93, 255, 0.8)',    // 研究生
+            'rgba(16, 185, 129, 0.8)',   // 导师
+            'rgba(99, 102, 241, 0.8)',   // 学院研究生秘书
+            'rgba(245, 158, 11, 0.8)',   // 学院领导
+            'rgba(54, 191, 250, 0.8)',   // 研究生院管理员
+            'rgba(139, 92, 246, 0.8)',   // 研究生院领导
+            'rgba(16, 185, 129, 0.8)',   // 学校领导
+            'rgba(239, 68, 68, 0.8)',    // 系统管理员
+            'rgba(107, 114, 128, 0.8)'   // 审计管理员
           ],
           borderColor: [
             'rgba(22, 93, 255, 1)',
+            'rgba(16, 185, 129, 1)',
+            'rgba(99, 102, 241, 1)',
+            'rgba(245, 158, 11, 1)',
             'rgba(54, 191, 250, 1)',
-            'rgba(99, 102, 241, 1)'
+            'rgba(139, 92, 246, 1)',
+            'rgba(16, 185, 129, 1)',
+            'rgba(239, 68, 68, 1)',
+            'rgba(107, 114, 128, 1)'
           ],
           borderWidth: 1
         }]
       };
 
       new Chart(typeCtx, {
-        type: 'doughnut',
+        type: 'bar',
         data: typeData,
         options: {
           responsive: true,
@@ -1028,14 +1108,25 @@
                 label: function(context) {
                   const label = context.label || '';
                   const value = context.raw || 0;
-                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                  const percentage = Math.round((value / total) * 100);
-                  return `${label}: ${value} (${percentage}%)`;
+                  return `${label}: ${value} 个`;
                 }
               }
             }
           },
-          cutout: '65%'
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
         }
       });
     }
@@ -1047,11 +1138,9 @@
       const notificationMessage = document.getElementById('notificationMessage');
       const notificationIcon = document.getElementById('notificationIcon');
 
-      // 设置通知内容
       notificationTitle.textContent = title;
       notificationMessage.textContent = message;
 
-      // 设置通知类型样式
       let bgColor, textColor, icon;
 
       switch(type) {
@@ -1079,11 +1168,9 @@
       notificationIcon.className = `${bgColor} ${textColor} mr-3 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0`;
       notificationIcon.innerHTML = `<i class="fa ${icon}"></i>`;
 
-      // 显示通知
       notification.classList.remove('hidden', 'translate-y-[-20px]');
       notification.classList.add('translate-y-0');
 
-      // 3秒后自动隐藏
       setTimeout(hideNotification, 3000);
     }
 
@@ -1103,30 +1190,19 @@
       const seconds = Math.floor((new Date() - date) / 1000);
 
       let interval = Math.floor(seconds / 31536000);
-
-      if (interval > 1) {
-        return interval + " 年前";
-      }
+      if (interval > 0) return interval + " 年前";
 
       interval = Math.floor(seconds / 2592000);
-      if (interval > 1) {
-        return interval + " 月前";
-      }
+      if (interval > 0) return interval + " 月前";
 
       interval = Math.floor(seconds / 86400);
-      if (interval > 1) {
-        return interval + " 天前";
-      }
+      if (interval > 0) return interval + " 天前";
 
       interval = Math.floor(seconds / 3600);
-      if (interval > 1) {
-        return interval + " 小时前";
-      }
+      if (interval > 0) return interval + " 小时前";
 
       interval = Math.floor(seconds / 60);
-      if (interval > 1) {
-        return interval + " 分钟前";
-      }
+      if (interval > 0) return interval + " 分钟前";
 
       return Math.floor(seconds) + " 秒前";
     }
