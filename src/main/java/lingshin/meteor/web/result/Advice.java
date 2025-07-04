@@ -23,7 +23,7 @@ public class Advice implements ResponseBodyAdvice<Object> {
       return object;
     if (object instanceof Result)
       return object;
-    return Result.success(object);
+    return Result.ok(object);
 
   }
 
@@ -33,11 +33,13 @@ public class Advice implements ResponseBodyAdvice<Object> {
 
   @ExceptionHandler(WebException.class)
   public Result<WebException> exception(WebException err) {
+    err.printStackTrace();
     return Result.fail(err);
   }
 
   @ExceptionHandler(Exception.class)
   public Result<Exception> exception(Exception err) {
+    err.printStackTrace();
     return Result.fail(err);
   }
 }

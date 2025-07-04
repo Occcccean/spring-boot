@@ -10,7 +10,7 @@ public class SM3Util {
     digest.update(plainBytes, 0, plainBytes.length);
     var cipherBytes = new byte[digest.getDigestSize()];
     digest.doFinal(cipherBytes, 0);
-    return Hex.encode(cipherBytes).toString();
+    return new String(Hex.encode(cipherBytes));
   }
 
   public static boolean verify(String plainText, String cipherText) {

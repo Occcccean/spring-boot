@@ -17,6 +17,7 @@ public class Password {
   }
 
   public boolean isValidate() {
-    return password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\\p{Punct}).{8,}$");
+    return password.matches(
+        "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\\p{Punct}).{8,}$");
   }
 }

@@ -1,9 +1,9 @@
 ip := "47.96.254.64"
-url := "http://" + ip + "/myapp/"
+url := "http://" + ip
 package := "target/web-0.0.1-SNAPSHOT.jar"
 
-run:
-  mvn spring-boot:run
+scp:package
+  scp {{package}} lingshin@gungnir.top:/opt/webapps/lingshin/web.jar
 
 test uri:
   @curl {{uri}} 2>/dev/null
@@ -18,9 +18,6 @@ docker:
 package:
   mvn package -DskipTests
 
-scp:package
-  scp {{package}} lingshin@gungnir.top:/opt/webapps/lingshin/web.jar
-
 clean:
   mvn clean
 
@@ -33,5 +30,5 @@ update file="student.sql":
 open uri:
   zen  '{{url + uri}}'
 
-log time="1min ago":
-  ssh lingshin@gungnir.top 'journalctl -u tomcat10.service --since "{{time}}"' | less    
+log time="5min ago":
+  ssh lingshin@gungnir.top 'journalctl -u spring-boot.service --since "{{time}}"' | nvim    
