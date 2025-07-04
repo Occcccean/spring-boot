@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户管理系统 | 现代化管理平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+    <!-- Tailwind CSS 配置 -->
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                primary: '#165DFF',
+                secondary: '#36BFFA',
+                light: '#F0F7FF',
+                dark: '#0D2B93',
+                success: '#10B981',
+                danger: '#EF4444',
+                warning: '#F59E0B',
+                info: '#6366F1'
+              },
+              fontFamily: {
+                inter: ['Inter', 'system-ui', 'sans-serif']
+              }
+            }
+          }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        @layer utilities {
+          .content-auto {
+            content-visibility: auto;
+          }
+          .card-shadow {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+          }
+          .card-shadow:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+          }
+          .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+          }
+          .animate-slide-up {
+            animation: slideUp 0.5s ease-out;
+          }
+          .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+          }
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        }
+    </style>
+</head>
+<body class="bg-light font-inter text-gray-800 min-h-screen flex flex-col">
+<!-- 顶部导航栏 -->
+<header class="bg-white shadow-sm sticky top-0 z-50 transition-all duration-300" id="mainHeader">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- 左侧Logo和标题 -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                    <i class="fa fa-user-circle text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">账户管理系统</h1>
+                    <p class="text-xs text-gray-500">现代化账户管理平台</p>
+                </div>
+            </div>
+
+            <!-- 中间搜索栏 - 仅在中等屏幕以上显示 -->
+            <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <input type="text" id="searchInput" placeholder="搜索账户..."
+                           class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- 右侧用户菜单 -->
+            <div class="flex items-center space-x-4">
+                <!-- 通知图标 -->
+                <div class="relative">
+                    <button class="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-primary transition-colors relative">
+                        <i class="fa fa-bell text-lg"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+                    </button>
+                </div>
+
+                <!-- 用户头像 -->
+                <div class="relative">
+                    <button class="flex items-center space-x-2 focus:outline-none" id="userMenuBtn">
+                        <img src="https://picsum.photos/id/1005/40/40" alt="用户头像" class="w-8 h-8 rounded-full object-cover border-2 border-primary/20">
+                        <span class="hidden md:inline text-sm font-medium">管理员</span>
+                        <i class="fa fa-chevron-down text-gray-400"></i>
+                    </button>
+
+                    <!-- 用户下拉菜单 -->
+                    <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10 animate-fade-in">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fa fa-user mr-2"></i>个人资料
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fa fa-cog mr-2"></i>设置
+                        </a>
+                        <div class="border-t border-gray-100 my-1"></div>
+                        <a href="#" class="block px-4 py-2 text-sm text-danger hover:bg-gray-100">
+                            <i class="fa fa-sign-out mr-2"></i>退出登录
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 移动端菜单按钮 -->
+                <button class="md:hidden p-2 rounded-full text-gray-500 hover:bg-gray-100" id="mobileMenuBtn">
+                    <i class="fa fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 移动端搜索栏 -->
+    <div class="md:hidden pb-3 px-4">
+        <div class="relative">
+            <input type="text" id="mobileSearchInput" placeholder="搜索账户..."
+                   class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50">
+            <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+    </div>
+</header>
+
+<!-- 主要内容区 -->
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- 页面标题和操作按钮 -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 animate-fade-in">
+        <div>
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-gray-900">账户管理</h2>
+            <p class="text-gray-500 mt-1">查看和管理系统中的所有账户</p>
+        </div>
+        <div class="mt-4 sm:mt-0">
+            <button id="addAccountBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors flex items-center shadow-md hover:shadow-lg">
+                <i class="fa fa-plus mr-2"></i> 添加账户
+            </button>
+        </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up" style="animation-delay: 0.1s">
+        <div class="bg-white rounded-xl p-6 card-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">总账户数</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="totalAccounts">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <i class="fa fa-user-circle text-primary text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+          <span class="text-success flex items-center">
+            <i class="fa fa-arrow-up mr-1"></i> 12.5%
+          </span>
+                <span class="text-gray-500 ml-2">相比上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 card-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">活跃账户</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="activeAccounts">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
+                    <i class="fa fa-check-circle text-success text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+          <span class="text-success flex items-center">
+            <i class="fa fa-arrow-up mr-1"></i> 8.2%
+          </span>
+                <span class="text-gray-500 ml-2">相比上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 card-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">新增账户</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="newAccounts">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-info/10 rounded-full flex items-center justify-center">
+                    <i class="fa fa-plus-circle text-info text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+          <span class="text-danger flex items-center">
+            <i class="fa fa-arrow-down mr-1"></i> 3.1%
+          </span>
+                <span class="text-gray-500 ml-2">相比上月</span>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl p-6 card-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">锁定账户</p>
+                    <h3 class="text-3xl font-bold text-gray-800 mt-1" id="lockedAccounts">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center">
+                    <i class="fa fa-lock text-warning text-xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center text-sm">
+          <span class="text-danger flex items-center">
+            <i class="fa fa-arrow-up mr-1"></i> 5.3%
+          </span>
+                <span class="text-gray-500 ml-2">相比上月</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 账户图表和表格 -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- 左侧图表区域 -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- 账户类型分布 -->
+            <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up" style="animation-delay: 0.2s">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">账户类型分布</h3>
+                    <button class="text-sm text-primary hover:text-primary/80">
+                        查看详情 <i class="fa fa-chevron-right ml-1 text-xs"></i>
+                    </button>
+                </div>
+                <div class="h-64">
+                    <canvas id="accountTypeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 最近活跃账户 -->
+            <div class="bg-white rounded-xl p-6 card-shadow animate-slide-up" style="animation-delay: 0.3s">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">最近活跃账户</h3>
+                    <button class="text-sm text-primary hover:text-primary/80">
+                        查看全部 <i class="fa fa-chevron-right ml-1 text-xs"></i>
+                    </button>
+                </div>
+                <div class="space-y-4" id="recentAccounts">
+                    <!-- 动态加载内容 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧表格区域 -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl card-shadow overflow-hidden animate-slide-up" style="animation-delay: 0.4s">
+                <!-- 筛选和操作 -->
+                <div class="p-6 border-b border-gray-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex flex-wrap gap-3">
+                            <div class="relative">
+                                <select id="statusFilter" class="pl-4 pr-10 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none">
+                                    <option value="all">所有状态</option>
+                                    <option value="active">活跃</option>
+                                    <option value="inactive">非活跃</option>
+                                    <option value="locked">已锁定</option>
+                                </select>
+                                <i class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                            </div>
+                            <div class="relative">
+                                <select id="roleFilter" class="pl-4 pr-10 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none">
+                                    <option value="all">所有角色</option>
+                                    <option value="user">普通用户</option>
+                                    <option value="admin">管理员</option>
+                                    <option value="manager">经理</option>
+                                </select>
+                                <i class="fa fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                            </div>
+                            <div class="relative">
+                                <input type="date" id="dateFilter" class="pl-4 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            </div>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center">
+                                <i class="fa fa-download mr-2"></i> 导出
+                            </button>
+                            <button class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center">
+                                <i class="fa fa-refresh mr-2"></i> 刷新
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 账户表格 -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                        <tr class="bg-gray-50">
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                ID
+                                <i class="fa fa-sort ml-1 text-gray-400"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                用户名
+                                <i class="fa fa-sort ml-1 text-gray-400"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                邮箱
+                                <i class="fa fa-sort ml-1 text-gray-400"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                角色
+                                <i class="fa fa-sort ml-1 text-gray-400"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                状态
+                                <i class="fa fa-sort ml-1 text-gray-400"></i>
+                            </th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                创建时间
+                                <i class="fa fa-sort ml-1 text-gray-400"></i>
+                            </th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                操作
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="accountsTableBody">
+                        <!-- 动态加载内容 -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分页 -->
+                <div class="p-4 border-t border-gray-100 flex items-center justify-between">
+                    <div class="text-sm text-gray-500">
+                        显示 <span id="showingRange">0-0</span> 条，共 <span id="totalCount">0</span> 条记录
+                    </div>
+                    <div class="flex space-x-1">
+                        <button class="px-3 py-1 rounded border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-50" disabled>
+                            <i class="fa fa-chevron-left text-xs"></i>
+                        </button>
+                        <button class="px-3 py-1 rounded border border-gray-200 bg-primary text-white">1</button>
+                        <button class="px-3 py-1 rounded border border-gray-200 text-gray-700 hover:bg-gray-50">2</button>
+                        <button class="px-3 py-1 rounded border border-gray-200 text-gray-700 hover:bg-gray-50">3</button>
+                        <button class="px-3 py-1 rounded border border-gray-200 text-gray-700 hover:bg-gray-50">
+                            <i class="fa fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- 页脚 -->
+<footer class="bg-white border-t border-gray-200 py-6 mt-12">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-4 md:mb-0">
+                <p class="text-gray-500 text-sm">© 2023 账户管理系统. 保留所有权利.</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" class="text-gray-500 hover:text-primary transition-colors">
+                    <i class="fa fa-question-circle mr-1"></i> 帮助中心
+                </a>
+                <a href="#" class="text-gray-500 hover:text-primary transition-colors">
+                    <i class="fa fa-file-text-o mr-1"></i> 使用条款
+                </a>
+                <a href="#" class="text-gray-500 hover:text-primary transition-colors">
+                    <i class="fa fa-shield mr-1"></i> 隐私政策
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- 添加/编辑账户模态框 -->
+<div id="accountModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative z-10 animate-fade-in transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+        <div class="flex justify-between items-start mb-4">
+            <h3 class="text-xl font-bold text-gray-800" id="modalTitle">添加账户</h3>
+            <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <form id="accountForm" class="space-y-4">
+            <input type="hidden" id="accountId">
+
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">用户名 <span class="text-danger">*</span></label>
+                <input type="text" id="username" name="username" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">邮箱 <span class="text-danger">*</span></label>
+                <input type="email" id="email" name="email" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">密码</label>
+                <input type="password" id="password" name="password" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                       placeholder="创建账户时必填，修改账户时可选">
+                <p class="text-xs text-gray-500 mt-1">至少8位，包含字母和数字</p>
+            </div>
+
+            <div>
+                <label for="role" class="block text-sm font-medium text-gray-700">角色 <span class="text-danger">*</span></label>
+                <select id="role" name="role" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
+                    <option value="user">普通用户</option>
+                    <option value="admin">管理员</option>
+                    <option value="manager">经理</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700">状态 <span class="text-danger">*</span></label>
+                <select id="status" name="status" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/50" required>
+                    <option value="active">活跃</option>
+                    <option value="inactive">非活跃</option>
+                    <option value="locked">已锁定</option>
+                </select>
+            </div>
+
+            <div class="mt-6 flex justify-end space-x-3">
+                <button type="button" id="cancelBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">取消</button>
+                <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 shadow-md hover:shadow-lg">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 删除确认模态框 -->
+<div id="deleteModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4 relative z-10 animate-fade-in transform transition-all duration-300 scale-95 opacity-0" id="deleteModalContent">
+        <div class="text-center mb-6">
+            <div class="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-trash text-danger text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">确认删除</h3>
+            <p class="text-gray-600" id="deleteMessage">您确定要删除这个账户吗？此操作不可撤销。</p>
+        </div>
+
+        <div class="flex justify-center space-x-3">
+            <button id="cancelDeleteBtn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">取消</button>
+            <button id="confirmDeleteBtn" class="px-4 py-2 bg-danger text-white rounded-lg hover:bg-danger/90 shadow-md hover:shadow-lg">删除</button>
+        </div>
+    </div>
+</div>
+
+<!-- 通知提示 -->
+<div id="notification" class="fixed top-20 right-4 z-50 max-w-sm w-full hidden transform transition-all duration-300 translate-y-[-20px]">
+    <div id="notificationContent" class="bg-white rounded-lg p-4 shadow-lg flex items-start">
+        <div id="notificationIcon" class="mr-3 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"></div>
+        <div>
+            <h4 id="notificationTitle" class="font-medium text-gray-800"></h4>
+            <p id="notificationMessage" class="text-sm text-gray-600 mt-1"></p>
+        </div>
+        <button id="closeNotificationBtn" class="ml-4 text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    // API 配置 - 请替换为您的实际IP地址
+    const API_BASE_URL = 'http://47.96.254.64/account';
+
+    // 当前操作的账户ID
+    let currentAccountId = null;
+
+    // DOM 加载完成后执行
+    document.addEventListener('DOMContentLoaded', () => {
+      // 加载账户数据
+      loadAccounts();
+
+      // 初始化图表
+      initCharts();
+
+      // 监听滚动事件，改变导航栏样式
+      window.addEventListener('scroll', () => {
+        const header = document.getElementById('mainHeader');
+        if (window.scrollY > 10) {
+          header.classList.add('shadow-md', 'bg-white/95', 'backdrop-blur-sm');
+          header.classList.remove('shadow-sm', 'bg-white');
+        } else {
+          header.classList.remove('shadow-md', 'bg-white/95', 'backdrop-blur-sm');
+          header.classList.add('shadow-sm', 'bg-white');
+        }
+      });
+
+      // 添加账户按钮点击事件
+      document.getElementById('addAccountBtn').addEventListener('click', () => {
+        openModal('添加账户');
+        document.getElementById('accountId').value = '';
+        document.getElementById('accountForm').reset();
+        document.getElementById('password').required = true;
+      });
+
+      // 取消按钮点击事件
+      document.getElementById('cancelBtn').addEventListener('click', () => {
+        closeModal();
+      });
+
+      // 关闭模态框按钮点击事件
+      document.getElementById('closeModalBtn').addEventListener('click', () => {
+        closeModal();
+      });
+
+      // 取消删除按钮点击事件
+      document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
+        closeDeleteModal();
+      });
+
+      // 确认删除按钮点击事件
+      document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+        deleteAccount(currentAccountId);
+      });
+
+      // 关闭通知按钮点击事件
+      document.getElementById('closeNotificationBtn').addEventListener('click', () => {
+        hideNotification();
+      });
+
+      // 表单提交事件
+      document.getElementById('accountForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        saveAccount();
+      });
+
+      // 搜索输入事件
+      document.getElementById('searchInput').addEventListener('input', debounce(() => {
+        loadAccounts();
+      }, 300));
+
+      // 移动端搜索输入事件
+      document.getElementById('mobileSearchInput').addEventListener('input', debounce(() => {
+        loadAccounts();
+      }, 300));
+
+      // 状态筛选事件
+      document.getElementById('statusFilter').addEventListener('change', loadAccounts);
+
+      // 角色筛选事件
+      document.getElementById('roleFilter').addEventListener('change', loadAccounts);
+
+      // 日期筛选事件
+      document.getElementById('dateFilter').addEventListener('change', loadAccounts);
+
+      // 用户菜单切换
+      document.getElementById('userMenuBtn').addEventListener('click', () => {
+        document.getElementById('userMenu').classList.toggle('hidden');
+      });
+
+      // 点击其他区域关闭用户菜单
+      document.addEventListener('click', (e) => {
+        if (!document.getElementById('userMenuBtn').contains(e.target) &&
+            !document.getElementById('userMenu').contains(e.target)) {
+          document.getElementById('userMenu').classList.add('hidden');
+        }
+      });
+    });
+
+    // 加载账户数据
+    function loadAccounts() {
+      const searchTerm = document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value;
+      const status = document.getElementById('statusFilter').value;
+      const role = document.getElementById('roleFilter').value;
+      const date = document.getElementById('dateFilter').value;
+
+      let url = API_BASE_URL;
+      const params = [];
+
+      if (searchTerm) {
+        params.push(`search=${encodeURIComponent(searchTerm)}`);
+      }
+
+      if (status !== 'all') {
+        params.push(`status=${status}`);
+      }
+
+      if (role !== 'all') {
+        params.push(`role=${role}`);
+      }
+
+      if (date) {
+        params.push(`date=${date}`);
+      }
+
+      if (params.length > 0) {
+        url += `?${params.join('&')}`;
+      }
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          renderAccountsTable(data);
+          updateAccountStats(data);
+          renderRecentAccounts(data.slice(0, 5));
+        })
+        .catch(error => {
+          showNotification('错误', '加载账户数据失败', 'error');
+          console.error('Error loading accounts:', error);
+        });
+    }
+
+    // 渲染账户表格
+    function renderAccountsTable(accounts) {
+      const tableBody = document.getElementById('accountsTableBody');
+      tableBody.innerHTML = '';
+
+      if (accounts.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="7" class="px-6 py-4 text-center text-gray-500">没有找到账户记录</td>
+          </tr>
+        `;
+        return;
+      }
+
+      accounts.forEach(account => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50 transition-colors';
+
+        // 状态标签样式
+        let statusClass = '';
+        let statusText = '';
+
+        switch(account.status) {
+          case 'active':
+            statusClass = 'bg-success/10 text-success';
+            statusText = '活跃';
+            break;
+          case 'inactive':
+            statusClass = 'bg-gray-100 text-gray-500';
+            statusText = '非活跃';
+            break;
+          case 'locked':
+            statusClass = 'bg-warning/10 text-warning';
+            statusText = '已锁定';
+            break;
+          default:
+            statusClass = 'bg-gray-100 text-gray-500';
+            statusText = '未知';
+        }
+
+        // 角色标签样式
+        let roleClass = '';
+        let roleText = '';
+
+        switch(account.role) {
+          case 'admin':
+            roleClass = 'bg-primary/10 text-primary';
+            roleText = '管理员';
+            break;
+          case 'manager':
+            roleClass = 'bg-info/10 text-info';
+            roleText = '经理';
+            break;
+          default:
+            roleClass = 'bg-gray-100 text-gray-500';
+            roleText = '普通用户';
+        }
+
+        // 格式化日期
+        const createdDate = new Date(account.createTime || account.createdAt || Date.now());
+        const formattedDate = createdDate.toLocaleDateString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+
+        row.innerHTML = `
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.id}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-10 w-10">
+                <img class="h-10 w-10 rounded-full" src="https://picsum.photos/id/${account.id + 100}/40/40" alt="${account.username}">
+              </div>
+              <div class="ml-3">
+                <div class="text-sm font-medium text-gray-900">${account.username}</div>
+                <div class="text-xs text-gray-500">ID: ${account.id}</div>
+              </div>
+            </div>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.email}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${roleClass}">
+              ${roleText}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+              ${statusText}
+            </span>
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formattedDate}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+            <button class="text-primary hover:text-primary/80 mr-3" onclick="editAccount(${account.id})">
+              <i class="fa fa-pencil"></i> 编辑
+            </button>
+            <button class="text-danger hover:text-danger/80" onclick="confirmDelete(${account.id})">
+              <i class="fa fa-trash"></i> 删除
+            </button>
+          </td>
+        `;
+
+        tableBody.appendChild(row);
+      });
+
+      // 更新分页信息
+      document.getElementById('showingRange').textContent = `1-${accounts.length}`;
+      document.getElementById('totalCount').textContent = accounts.length;
+    }
+
+    // 更新账户统计信息
+    function updateAccountStats(accounts) {
+      document.getElementById('totalAccounts').textContent = accounts.length;
+
+      // 计算各类账户数量
+      const activeAccounts = accounts.filter(account => account.status === 'active').length;
+      const newAccounts = accounts.filter(account => {
+        const createDate = new Date(account.createTime || account.createdAt || 0);
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        return createDate > thirtyDaysAgo;
+      }).length;
+      const lockedAccounts = accounts.filter(account => account.status === 'locked').length;
+
+      document.getElementById('activeAccounts').textContent = activeAccounts;
+      document.getElementById('newAccounts').textContent = newAccounts;
+      document.getElementById('lockedAccounts').textContent = lockedAccounts;
+    }
+
+    // 渲染最近活跃账户
+    function renderRecentAccounts(accounts) {
+      const container = document.getElementById('recentAccounts');
+      container.innerHTML = '';
+
+      if (accounts.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-sm">没有最近活跃账户</p>';
+        return;
+      }
+
+      accounts.forEach(account => {
+        const item = document.createElement('div');
+        item.className = 'flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors';
+
+        // 格式化最后活跃时间
+        const lastActive = new Date(account.lastLogin || Date.now());
+        const formattedTime = formatTimeAgo(lastActive);
+
+        item.innerHTML = `
+          <img src="https://picsum.photos/id/${account.id + 100}/40/40" alt="${account.username}" class="w-10 h-10 rounded-full object-cover">
+          <div class="ml-3 flex-1">
+            <h4 class="text-sm font-medium text-gray-800">${account.username}</h4>
+            <p class="text-xs text-gray-500">${formattedTime}</p>
+          </div>
+          <span class="px-2 py-1 text-xs rounded-full ${account.status === 'active' ? 'bg-success/10 text-success' : 'bg-gray-100 text-gray-500'}">
+            ${account.status === 'active' ? '活跃' : '离线'}
+          </span>
+        `;
+
+        container.appendChild(item);
+      });
+    }
+
+    // 打开模态框
+    function openModal(title) {
+      const modal = document.getElementById('accountModal');
+      const modalContent = document.getElementById('modalContent');
+
+      document.getElementById('modalTitle').textContent = title;
+      modal.classList.remove('hidden');
+
+      // 触发动画
+      setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    // 关闭模态框
+    function closeModal() {
+      const modal = document.getElementById('accountModal');
+      const modalContent = document.getElementById('modalContent');
+
+      modalContent.classList.remove('scale-100', 'opacity-100');
+      modalContent.classList.add('scale-95', 'opacity-0');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    // 打开删除模态框
+    function confirmDelete(id) {
+      currentAccountId = id;
+      const modal = document.getElementById('deleteModal');
+      const modalContent = document.getElementById('deleteModalContent');
+
+      document.getElementById('deleteMessage').textContent = `您确定要删除ID为 ${id} 的账户吗？此操作不可撤销。`;
+      modal.classList.remove('hidden');
+
+      // 触发动画
+      setTimeout(() => {
+        modalContent.classList.remove('scale-95', 'opacity-0');
+        modalContent.classList.add('scale-100', 'opacity-100');
+      }, 10);
+    }
+
+    // 关闭删除模态框
+    function closeDeleteModal() {
+      const modal = document.getElementById('deleteModal');
+      const modalContent = document.getElementById('deleteModalContent');
+
+      modalContent.classList.remove('scale-100', 'opacity-100');
+      modalContent.classList.add('scale-95', 'opacity-0');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    // 编辑账户
+    function editAccount(id) {
+      fetch(`${API_BASE_URL}/${id}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('账户不存在');
+          }
+          return response.json();
+        })
+        .then(account => {
+          openModal('编辑账户');
+          document.getElementById('accountId').value = account.id;
+          document.getElementById('username').value = account.username;
+          document.getElementById('email').value = account.email;
+          document.getElementById('role').value = account.role || 'user';
+          document.getElementById('status').value = account.status || 'active';
+          document.getElementById('password').required = false;
+        })
+        .catch(error => {
+          showNotification('错误', '获取账户信息失败', 'error');
+          console.error('Error fetching account:', error);
+        });
+    }
+
+    // 保存账户
+    function saveAccount() {
+      const id = document.getElementById('accountId').value;
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      const status = document.getElementById('status').value;
+
+      const accountData = {
+        username,
+        email,
+        role,
+        status
+      };
+
+      // 如果是创建账户或者填写了密码，则包含密码字段
+      if (!id || password) {
+        accountData.password = password;
+      }
+
+      const method = id ? 'PUT' : 'POST';
+      let url = API_BASE_URL;
+
+      if (id) {
+        url += `/${id}`;
+      }
+
+      fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(accountData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('保存账户失败');
+          }
+          return response.json();
+        })
+        .then(() => {
+          closeModal();
+          loadAccounts();
+          showNotification('成功', id ? '账户更新成功' : '账户创建成功', 'success');
+        })
+        .catch(error => {
+          showNotification('错误', '保存账户失败', 'error');
+          console.error('Error saving account:', error);
+        });
+    }
+
+    // 删除账户
+    function deleteAccount(id) {
+      fetch(`${API_BASE_URL}/${id}`, {
+        method: 'DELETE'
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('删除账户失败');
+          }
+          closeDeleteModal();
+          loadAccounts();
+          showNotification('成功', '账户已删除', 'success');
+        })
+        .catch(error => {
+          closeDeleteModal();
+          showNotification('错误', '删除账户失败', 'error');
+          console.error('Error deleting account:', error);
+        });
+    }
+
+    // 初始化图表
+    function initCharts() {
+      // 账户类型分布图表
+      const typeCtx = document.getElementById('accountTypeChart').getContext('2d');
+
+      // 模拟数据 - 实际应用中应从API获取
+      const typeData = {
+        labels: ['普通用户', '管理员', '经理'],
+        datasets: [{
+          data: [70, 20, 10],
+          backgroundColor: [
+            'rgba(22, 93, 255, 0.8)',
+            'rgba(54, 191, 250, 0.8)',
+            'rgba(99, 102, 241, 0.8)'
+          ],
+          borderColor: [
+            'rgba(22, 93, 255, 1)',
+            'rgba(54, 191, 250, 1)',
+            'rgba(99, 102, 241, 1)'
+          ],
+          borderWidth: 1
+        }]
+      };
+
+      new Chart(typeCtx, {
+        type: 'doughnut',
+        data: typeData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = Math.round((value / total) * 100);
+                  return `${label}: ${value} (${percentage}%)`;
+                }
+              }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+
+    // 显示通知
+    function showNotification(title, message, type = 'info') {
+      const notification = document.getElementById('notification');
+      const notificationTitle = document.getElementById('notificationTitle');
+      const notificationMessage = document.getElementById('notificationMessage');
+      const notificationIcon = document.getElementById('notificationIcon');
+
+      // 设置通知内容
+      notificationTitle.textContent = title;
+      notificationMessage.textContent = message;
+
+      // 设置通知类型样式
+      let bgColor, textColor, icon;
+
+      switch(type) {
+        case 'success':
+          bgColor = 'bg-success/10';
+          textColor = 'text-success';
+          icon = 'fa-check-circle';
+          break;
+        case 'error':
+          bgColor = 'bg-danger/10';
+          textColor = 'text-danger';
+          icon = 'fa-exclamation-circle';
+          break;
+        case 'warning':
+          bgColor = 'bg-warning/10';
+          textColor = 'text-warning';
+          icon = 'fa-exclamation-triangle';
+          break;
+        default:
+          bgColor = 'bg-primary/10';
+          textColor = 'text-primary';
+          icon = 'fa-info-circle';
+      }
+
+      notificationIcon.className = `${bgColor} ${textColor} mr-3 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0`;
+      notificationIcon.innerHTML = `<i class="fa ${icon}"></i>`;
+
+      // 显示通知
+      notification.classList.remove('hidden', 'translate-y-[-20px]');
+      notification.classList.add('translate-y-0');
+
+      // 3秒后自动隐藏
+      setTimeout(hideNotification, 3000);
+    }
+
+    // 隐藏通知
+    function hideNotification() {
+      const notification = document.getElementById('notification');
+      notification.classList.remove('translate-y-0');
+      notification.classList.add('translate-y-[-20px]');
+
+      setTimeout(() => {
+        notification.classList.add('hidden');
+      }, 300);
+    }
+
+    // 格式化时间为"多久前"
+    function formatTimeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+
+      let interval = Math.floor(seconds / 31536000);
+
+      if (interval > 1) {
+        return interval + " 年前";
+      }
+
+      interval = Math.floor(seconds / 2592000);
+      if (interval > 1) {
+        return interval + " 月前";
+      }
+
+      interval = Math.floor(seconds / 86400);
+      if (interval > 1) {
+        return interval + " 天前";
+      }
+
+      interval = Math.floor(seconds / 3600);
+      if (interval > 1) {
+        return interval + " 小时前";
+      }
+
+      interval = Math.floor(seconds / 60);
+      if (interval > 1) {
+        return interval + " 分钟前";
+      }
+
+      return Math.floor(seconds) + " 秒前";
+    }
+
+    // 防抖函数
+    function debounce(func, delay) {
+      let timeout;
+      return function() {
+        const context = this;
+        const args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), delay);
+      };
+    }
+</script>
+</body>
+</html>
