@@ -18,6 +18,6 @@ class Hello {
 
   @GetMapping("/password")
   public Result<String> encode(@RequestParam String password) {
-    return Result.ok(new Password(password).getEncodedPassword());
+    return Result.ok(new Password(password).toEncodedPassword());
   }
 }

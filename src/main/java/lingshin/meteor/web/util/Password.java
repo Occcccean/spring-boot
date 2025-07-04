@@ -8,7 +8,7 @@ import lombok.Data;
 public class Password {
   String password;
 
-  public String getEncodedPassword() {
+  public String toEncodedPassword() {
     return SM3Util.encrypt(password);
   }
 
