@@ -300,7 +300,7 @@
                             <button class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center">
                                 <i class="fa fa-download mr-2"></i> 导出
                             </button>
-                            <button class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center">
+                            <button class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50 flex items-center" id="refreshBtn">
                                 <i class="fa fa-refresh mr-2"></i> 刷新
                             </button>
                         </div>
@@ -547,6 +547,9 @@
         saveAccount();
       });
 
+      // 刷新按钮点击事件
+      document.getElementById('refreshBtn').addEventListener('click', loadAccounts);
+
       // 搜索输入事件
       document.getElementById('searchInput').addEventListener('input', debounce(() => {
         loadAccounts();
@@ -580,7 +583,7 @@
       });
     });
 
-    // 加载账户数据
+    // 加载账户数据（优化版）
     function loadAccounts() {
       const searchTerm = document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value;
       const status = document.getElementById('statusFilter').value;
@@ -611,22 +614,45 @@
       }
 
       fetch(url)
-        .then(response => response.json())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`API请求失败 (状态码: ${response.status})`);
+          }
+          return response.json();
+        })
         .then(data => {
-          renderAccountsTable(data);
-          updateAccountStats(data);
-          renderRecentAccounts(data.slice(0, 5));
+          // 关键修复：确保数据为数组
+          let accounts = [];
+          if (Array.isArray(data)) {
+            accounts = data;
+          } else if (data && data.data && Array.isArray(data.data)) {
+            // 处理API返回 { data: [...] } 格式
+            accounts = data.data;
+          } else {
+            // 处理单个对象或其他格式
+            accounts = [data];
+          }
+
+          renderAccountsTable(accounts);
+          updateAccountStats(accounts);
+          renderRecentAccounts(accounts.slice(0, 5));
         })
         .catch(error => {
-          showNotification('错误', '加载账户数据失败', 'error');
+          showNotification('错误', '加载账户数据失败：' + error.message, 'error');
           console.error('Error loading accounts:', error);
+          renderAccountsTable([]); // 加载失败时显示空列表
         });
     }
 
-    // 渲染账户表格
+    // 渲染账户表格（优化版）
     function renderAccountsTable(accounts) {
       const tableBody = document.getElementById('accountsTableBody');
       tableBody.innerHTML = '';
+
+      // 确保accounts是数组
+      if (!Array.isArray(accounts)) {
+        accounts = [];
+      }
 
       if (accounts.length === 0) {
         tableBody.innerHTML = `
@@ -634,6 +660,8 @@
             <td colspan="7" class="px-6 py-4 text-center text-gray-500">没有找到账户记录</td>
           </tr>
         `;
+        updateAccountStats([]); // 更新统计数据
+        renderRecentAccounts([]); // 更新最近账户
         return;
       }
 
@@ -645,7 +673,7 @@
         let statusClass = '';
         let statusText = '';
 
-        switch(account.status) {
+        switch(account.status || 'inactive') {
           case 'active':
             statusClass = 'bg-success/10 text-success';
             statusText = '活跃';
@@ -667,7 +695,7 @@
         let roleClass = '';
         let roleText = '';
 
-        switch(account.role) {
+        switch(account.role || 'user') {
           case 'admin':
             roleClass = 'bg-primary/10 text-primary';
             roleText = '管理员';
@@ -681,8 +709,15 @@
             roleText = '普通用户';
         }
 
-        // 格式化日期
-        const createdDate = new Date(account.createTime || account.createdAt || Date.now());
+        // 格式化日期（处理可能的日期格式问题）
+        let createdDate = new Date();
+        if (account.createTime) {
+          createdDate = new Date(account.createTime);
+        } else if (account.createdAt) {
+          createdDate = new Date(account.createdAt);
+        } else if (typeof account.createTime === 'string') {
+          createdDate = new Date(account.createTime);
+        }
         const formattedDate = createdDate.toLocaleDateString('zh-CN', {
           year: 'numeric',
           month: '2-digit',
@@ -692,19 +727,19 @@
         });
 
         row.innerHTML = `
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.id}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.id || 'N/A'}</td>
           <td class="px-6 py-4 whitespace-nowrap">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10">
-                <img class="h-10 w-10 rounded-full" src="https://picsum.photos/id/${account.id + 100}/40/40" alt="${account.username}">
+                <img class="h-10 w-10 rounded-full" src="https://picsum.photos/id/${account.id + 100}/40/40" alt="${account.username || '未知用户'}">
               </div>
               <div class="ml-3">
-                <div class="text-sm font-medium text-gray-900">${account.username}</div>
-                <div class="text-xs text-gray-500">ID: ${account.id}</div>
+                <div class="text-sm font-medium text-gray-900">${account.username || '未知用户'}</div>
+                <div class="text-xs text-gray-500">ID: ${account.id || 'N/A'}</div>
               </div>
             </div>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.email}</td>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${account.email || '未设置'}</td>
           <td class="px-6 py-4 whitespace-nowrap">
             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${roleClass}">
               ${roleText}
@@ -717,10 +752,10 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formattedDate}</td>
           <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-            <button class="text-primary hover:text-primary/80 mr-3" onclick="editAccount(${account.id})">
+            <button class="text-primary hover:text-primary/80 mr-3" onclick="editAccount(${account.id || 0})">
               <i class="fa fa-pencil"></i> 编辑
             </button>
-            <button class="text-danger hover:text-danger/80" onclick="confirmDelete(${account.id})">
+            <button class="text-danger hover:text-danger/80" onclick="confirmDelete(${account.id || 0})">
               <i class="fa fa-trash"></i> 删除
             </button>
           </td>
@@ -736,6 +771,11 @@
 
     // 更新账户统计信息
     function updateAccountStats(accounts) {
+      // 确保accounts是数组
+      if (!Array.isArray(accounts)) {
+        accounts = [];
+      }
+
       document.getElementById('totalAccounts').textContent = accounts.length;
 
       // 计算各类账户数量
@@ -758,6 +798,11 @@
       const container = document.getElementById('recentAccounts');
       container.innerHTML = '';
 
+      // 确保accounts是数组
+      if (!Array.isArray(accounts)) {
+        accounts = [];
+      }
+
       if (accounts.length === 0) {
         container.innerHTML = '<p class="text-gray-500 text-sm">没有最近活跃账户</p>';
         return;
@@ -767,14 +812,14 @@
         const item = document.createElement('div');
         item.className = 'flex items-center p-3 hover:bg-gray-50 rounded-lg transition-colors';
 
-        // 格式化最后活跃时间
-        const lastActive = new Date(account.lastLogin || Date.now());
+        // 格式化最后活跃时间（使用当前时间模拟）
+        const lastActive = new Date(account.lastLogin || Date.now() - (Math.random() * 24 * 60 * 60 * 1000));
         const formattedTime = formatTimeAgo(lastActive);
 
         item.innerHTML = `
           <img src="https://picsum.photos/id/${account.id + 100}/40/40" alt="${account.username}" class="w-10 h-10 rounded-full object-cover">
           <div class="ml-3 flex-1">
-            <h4 class="text-sm font-medium text-gray-800">${account.username}</h4>
+            <h4 class="text-sm font-medium text-gray-800">${account.username || '未知用户'}</h4>
             <p class="text-xs text-gray-500">${formattedTime}</p>
           </div>
           <span class="px-2 py-1 text-xs rounded-full ${account.status === 'active' ? 'bg-success/10 text-success' : 'bg-gray-100 text-gray-500'}">
@@ -855,14 +900,14 @@
         .then(account => {
           openModal('编辑账户');
           document.getElementById('accountId').value = account.id;
-          document.getElementById('username').value = account.username;
-          document.getElementById('email').value = account.email;
+          document.getElementById('username').value = account.username || '';
+          document.getElementById('email').value = account.email || '';
           document.getElementById('role').value = account.role || 'user';
           document.getElementById('status').value = account.status || 'active';
           document.getElementById('password').required = false;
         })
         .catch(error => {
-          showNotification('错误', '获取账户信息失败', 'error');
+          showNotification('错误', '获取账户信息失败：' + error.message, 'error');
           console.error('Error fetching account:', error);
         });
     }
@@ -884,7 +929,7 @@
       };
 
       // 如果是创建账户或者填写了密码，则包含密码字段
-      if (!id || password) {
+      if (password || !id) {
         accountData.password = password;
       }
 
@@ -914,7 +959,7 @@
           showNotification('成功', id ? '账户更新成功' : '账户创建成功', 'success');
         })
         .catch(error => {
-          showNotification('错误', '保存账户失败', 'error');
+          showNotification('错误', '保存账户失败：' + error.message, 'error');
           console.error('Error saving account:', error);
         });
     }
@@ -934,7 +979,7 @@
         })
         .catch(error => {
           closeDeleteModal();
-          showNotification('错误', '删除账户失败', 'error');
+          showNotification('错误', '删除账户失败：' + error.message, 'error');
           console.error('Error deleting account:', error);
         });
     }
@@ -944,7 +989,7 @@
       // 账户类型分布图表
       const typeCtx = document.getElementById('accountTypeChart').getContext('2d');
 
-      // 模拟数据 - 实际应用中应从API获取
+      // 使用模拟数据，实际应用中应从API获取
       const typeData = {
         labels: ['普通用户', '管理员', '经理'],
         datasets: [{
