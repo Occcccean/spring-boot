@@ -1,0 +1,21 @@
+@base = "http://47.96.254.64"
+
+GET {{base}}/hello
+
+###
+
+GET {{base}}/account
+
+###
+
+GET {{base}}/account/2
+
+###
+
+POST {{base}}/login
+Content-Type: application/json
+
+{
+  "username":"cherry",
+  "password":"cherry"
+}

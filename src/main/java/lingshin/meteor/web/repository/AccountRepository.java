@@ -15,10 +15,10 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
   Optional<Account> findByUsername(String username);
 
   @Modifying
-  @Query("Update account set failed_times = failed_times + 1 where id = :id")
+  @Query("Update Account set failed_times = failed_times + 1 where id = :id")
   void increateFailedTimesById(@Param("id") Integer id);
 
   @Modifying
-  @Query("Update account set failed_times = 0 where id = :id")
+  @Query("Update Account set failed_times = 0 where id = :id")
   void clearFailedTimesById(@Param("id") Integer id);
 }

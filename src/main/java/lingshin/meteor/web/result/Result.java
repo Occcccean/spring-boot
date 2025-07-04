@@ -25,4 +25,12 @@ public class Result<Type> {
   public static <Type> Result<Type> fail(String msg) {
     return fail(400, msg);
   }
+
+  public static <Type> Result<Type> fail(WebException e) {
+    return fail(e.getCode(), e.getMessage());
+  }
+
+  public static <Type> Result<Type> fail(Exception e) {
+    return fail(500, e.getMessage());
+  }
 }

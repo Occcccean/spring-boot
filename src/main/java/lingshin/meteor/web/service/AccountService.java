@@ -49,7 +49,7 @@ public class AccountService {
 
     var encodedPassword = account.getPassword();
 
-    if (new Password(password).verify(encodedPassword)) {
+    if (!new Password(password).verify(encodedPassword)) {
       accountRepository.increateFailedTimesById(account.getId());
       throw new WebException("密码有问题");
     }
