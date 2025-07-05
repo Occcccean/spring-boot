@@ -95,10 +95,9 @@ create table operation_log (
     id bigint primary key auto_increment,
     user_id bigint not null comment '用户id',
     username varchar(50) not null comment '用户名',
+    role varchar(20) check (role in ('student', 'mentor', 'secretary', 'student_leader', 'student_manager', 'student_leader', 'university_leader', 'system_manager', 'auditor_manager', null)),
     operation_type varchar(50) not null comment '操作类型',
     operation_content text comment '操作内容详情',
-    ip_address varchar(50) comment 'ip地址',
-    user_agent varchar(255) comment '用户代理',
     operation_time datetime not null comment '操作时间',
     status varchar(20) default 'success' comment '操作状态'
 );
