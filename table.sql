@@ -18,7 +18,7 @@ create table account (
 );
 
 
-create entor (
+create table mentor (
     id serial primary key,
     name varchar(50) not null,
     college varchar(100),
