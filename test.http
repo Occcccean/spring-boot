@@ -19,3 +19,8 @@ Content-Type: application/json
   "username":"cherry",
   "password":"cherry"
 }
+
+###
+
+GET {{base}}/student?sid=301234123456
+

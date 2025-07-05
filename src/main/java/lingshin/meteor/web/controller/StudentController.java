@@ -1,6 +1,8 @@
 package lingshin.meteor.web.controller;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import lingshin.meteor.web.entity.Student;
 import lingshin.meteor.web.service.StudentService;
@@ -30,11 +32,23 @@ public class StudentController {
       String gender,
       String nation,
       String country,
-      String mentorName) {
+      String mentor) {
+    static StudentQueryDTO fromStudent(Student student) {
+      return new StudentQueryDTO(
+          student.getName(),
+          student.getStudent_id(),
+          student.getMajor(),
+          student.getCollege(),
+          student.getCampus(),
+          student.getGender(),
+          student.getNation(),
+          student.getCountry(),
+          student.getMentor().getId().toString());
+    }
   }
 
   @GetMapping
-  public List<Student> search(
+  public List<StudentQueryDTO> search(
       @ModelAttribute StudentQueryDTO query) {
     return studentService.search(
         query.name,
@@ -45,7 +59,10 @@ public class StudentController {
         query.gender,
         query.nation,
         query.country,
-        query.mentorName);
+        query.mentor)
+        .stream()
+        .map(StudentQueryDTO::fromStudent)
+        .collect(Collectors.toList());
   }
 
   @SneakyThrows

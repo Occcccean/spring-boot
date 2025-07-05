@@ -8,18 +8,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "college_leader")
-public class CollegeLeader {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+public class CollegeLeader implements CollegeRole {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    @Column(length = 50, nullable = false)
-    private String name;
+  @Column(length = 50, nullable = false)
+  private String name;
 
-    @Column(length = 100)
-    private String college;
+  @Column(length = 100)
+  private String college;
 
-    @OneToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "id", unique = true)
-    private Account account;
+  @OneToOne
+  @JoinColumn(name = "account_id", referencedColumnName = "id", unique = true)
+  private Account account;
 }

@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "mentor")
-public class Mentor {
+public class Mentor implements Role {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Integer id;
@@ -26,7 +26,7 @@ public class Mentor {
   @Column(length = 100)
   String college;
 
-  @ManyToOne
+  @OneToOne
   @JoinColumn(name = "account_id", referencedColumnName = "id")
   Account account;
 }

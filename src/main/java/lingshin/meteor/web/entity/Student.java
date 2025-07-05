@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "student")
-public class Student {
+public class Student implements Role {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Integer id;
