@@ -18,12 +18,11 @@ create table account (
 );
 
 
-create table mentor (
+create entor (
     id serial primary key,
     name varchar(50) not null,
     college varchar(100),
-    account_id integer unique,
-    foreign key (account_id) references account(id) on delete set null
+    account_id integer unique references account(id) on delete set null
 );
 
 
@@ -51,10 +50,8 @@ create table student (
     qq varchar(20),
     home_phone_number varchar(20),
     home_contact_man varchar(50),
-    account_id integer unique,
-    mentor_id integer,
-    mentor varchar(50),
-    foreign key (account_id) references account(id) on delete set null
+    account_id integer unique references account(id),
+    mentor_id integer references mentor(id),
 );
 
 

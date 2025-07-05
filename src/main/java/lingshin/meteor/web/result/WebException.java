@@ -1,7 +1,6 @@
 package lingshin.meteor.web.result;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
