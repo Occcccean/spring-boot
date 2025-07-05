@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lingshin.meteor.web.entity.Account;
-import lingshin.meteor.web.entity.Role;
 import lingshin.meteor.web.repository.AccountRepository;
 import lingshin.meteor.web.result.WebException;
 import lingshin.meteor.web.util.Password;
