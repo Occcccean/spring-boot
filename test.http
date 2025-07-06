@@ -27,3 +27,8 @@ Content-Type: application/json
   "password": "meteor",
   "username": "meteor"
 }
+
+###
+
+GET {{base}}/student?sid=301234123456
+

@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "student")
-public class Student {
+public class Student implements Role {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Integer id;
@@ -32,30 +32,31 @@ public class Student {
   @Column(length = 50)
   String nation;
 
-  LocalDateTime birth_date;
+  @Column(name = "birth_date")
+  LocalDateTime birthDate;
 
-  @Column(length = 100)
-  String birth_place;
+  @Column(name = "birth_place", length = 100)
+  String birthPlace;
 
-  @Column(length = 20)
-  String id_number;
+  @Column(name = "id_number", length = 20)
+  String idNumber;
 
-  @Column(length = 20)
-  String student_id;
+  @Column(name = "student_id", length = 20)
+  String studentId;
 
   @Column(length = 50)
   String country;
 
-  @Column(length = 200)
-  String home_address;
+  @Column(name = "home_address", length = 200)
+  String homeAddress;
 
-  @Column(length = 20)
-  String phone_number;
+  @Column(name = "phone_number", length = 20)
+  String phoneNumber;
 
   @Column(length = 50)
   String email;
-  @Column(length = 20)
-  String dorm_id;
+  @Column(name = "dorm_id", length = 20)
+  String dormId;
 
   Integer grade;
 
@@ -66,20 +67,21 @@ public class Student {
   @Column(length = 50)
   String campus;
 
-  LocalDate entrance_date;
+  @Column(name = "entrance_date")
+  LocalDate entranceDate;
 
-  @Column(length = 50)
-  String class_id;
+  @Column(name = "class_id", length = 50)
+  String classId;
   @Column(length = 50)
   String wechat;
   @Column(length = 20)
   String qq;
-  @Column(length = 20)
-  String home_phone_number;
-  @Column(length = 50)
-  String home_contact_man;
-  @Column(unique = true)
-  Integer account_id;
+  @Column(name = "home_phone_number", length = 20)
+  String homePhoneNumber;
+  @Column(name = "home_contact_man", length = 50)
+  String homeContactMan;
+  @Column(name = "account_id", unique = true)
+  Integer accountId;
 
   @ManyToOne
   @JoinColumn(name = "mentor_id", referencedColumnName = "id")

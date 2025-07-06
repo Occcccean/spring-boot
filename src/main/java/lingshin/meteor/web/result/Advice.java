@@ -27,6 +27,7 @@ public class Advice implements ResponseBodyAdvice<Object> {
 
   }
 
+  @Override
   public boolean supports(MethodParameter returnType, Class converterType) {
     return true;
   }

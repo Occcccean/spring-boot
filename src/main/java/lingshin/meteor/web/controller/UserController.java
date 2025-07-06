@@ -1,7 +1,5 @@
 package lingshin.meteor.web.controller;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,9 +18,19 @@ public class UserController {
   record UserDTO(String username, String password) {
   }
 
+  record AccountDTO(
+      Integer id,
+      String username,
+      String name) {
+    static AccountDTO fromAccount(Account account) {
+      return new AccountDTO(account.getId(), account.getUsername(), "");
+    }
+  }
+
   @PostMapping("/login")
-  public Account login(@RequestBody UserDTO user) {
-    return accountService.login(user.username, user.password);
+  public AccountDTO login(@RequestBody UserDTO user) {
+    return AccountDTO.fromAccount(
+        accountService.login(user.username, user.password));
   }
 
   record UserPasswordDTO(Integer id, String password) {
