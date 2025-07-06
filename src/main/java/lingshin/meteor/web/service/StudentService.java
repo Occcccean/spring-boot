@@ -31,7 +31,7 @@ public class StudentService {
       String country,
       String mentorName) {
     var search_condition = PredicateChainer
-        .<Student>ofField(sid, Student::getStudent_id)
+        .<Student>ofField(sid, Student::getStudentId)
         .mapChain(major, Student::getMajor)
         .mapChain(college, Student::getCollege)
         .mapChain(campus, Student::getCampus)

@@ -34,4 +34,4 @@ open uri:
   zen  '{{url + uri}}'
 
 log time="1min ago":
-  ssh lingshin@gungnir.top 'journalctl -u tomcat10.service --since "{{time}}"' | less    
+  ssh lingshin@gungnir.top 'journalctl -u spring-boot.service --since "{{time}}"' | nvim

@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lingshin.meteor.web.entity.Account;
+import lingshin.meteor.web.entity.Role;
 import lingshin.meteor.web.result.WebException;
 import lingshin.meteor.web.service.AccountService;
+import lingshin.meteor.web.service.RoleService;
 import lombok.SneakyThrows;
 
 @RestController
@@ -21,6 +23,9 @@ import lombok.SneakyThrows;
 public class AccountController {
   @Autowired
   AccountService accountService;
+
+  @Autowired
+  RoleService roleService;
 
   @GetMapping()
   public List<Account> getAll() {
@@ -42,6 +47,11 @@ public class AccountController {
   @DeleteMapping("/{id}")
   public void delete(@PathVariable Integer id) {
     accountService.getRepository().deleteById(id);
+  }
+
+  @GetMapping("/{id}/role")
+  public Role getRole(@PathVariable Integer id) {
+    return roleService.getRole(id);
   }
 
 }

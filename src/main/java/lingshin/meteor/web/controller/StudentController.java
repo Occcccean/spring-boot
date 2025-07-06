@@ -1,7 +1,6 @@
 package lingshin.meteor.web.controller;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import lingshin.meteor.web.entity.Student;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -36,7 +34,7 @@ public class StudentController {
     static StudentQueryDTO fromStudent(Student student) {
       return new StudentQueryDTO(
           student.getName(),
-          student.getStudent_id(),
+          student.getStudentId(),
           student.getMajor(),
           student.getCollege(),
           student.getCampus(),
