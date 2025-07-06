@@ -31,7 +31,7 @@ public class UserController {
   @PostMapping("/chpasswd")
   public void changePassword(@RequestBody UserPasswordDTO user) {
     accountService.password(
-        Integer.parseInt(user.id),
+        user.id,
         user.password);
   }
 }
