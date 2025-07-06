@@ -74,11 +74,8 @@ public class AccountService {
     if (!passwd.isValidate())
       throw new WebException("密码格式有问题");
 
-    var maybeAccount = accountRepository.findById(id);
-    if (!maybeAccount.isPresent())
-      throw new WebException("用户不存在");
-
-    var account = maybeAccount.get();
+    var account = accountRepository.findById(id).orElseThrow(() -> new WebException("用户不存在"));
+    account.setPassword(passwd.toEncodedPassword());
 
     accountRepository.save(account);
   }
