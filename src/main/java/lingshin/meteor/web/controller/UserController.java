@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lingshin.meteor.web.entity.Account;
-import lingshin.meteor.web.result.Result;
 import lingshin.meteor.web.service.AccountService;
 
 @RestController
@@ -26,10 +25,13 @@ public class UserController {
     return accountService.login(user.username, user.password);
   }
 
+  record UserPasswordDTO(Integer id, String password) {
+  }
+
   @PostMapping("/chpasswd")
-  public void changePassword(@RequestBody Map<String, String> requestParams) {
+  public void changePassword(@RequestBody UserPasswordDTO user) {
     accountService.password(
-        Integer.parseInt(requestParams.get("id")),
-        requestParams.get("password"));
+        Integer.parseInt(user.id),
+        user.password);
   }
 }
