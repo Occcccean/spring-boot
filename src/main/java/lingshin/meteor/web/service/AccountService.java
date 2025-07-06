@@ -21,10 +21,6 @@ public class AccountService {
     return accountRepository;
   }
 
-  public boolean changePassword() {
-    return false;
-  }
-
   @SneakyThrows
   public Account login(String username, String password) {
     var maybeAccount = accountRepository.findByUsername(username);
@@ -74,7 +70,10 @@ public class AccountService {
     if (!passwd.isValidate())
       throw new WebException("密码格式有问题");
 
-    var account = accountRepository.findById(id).orElseThrow(() -> new WebException("用户不存在"));
+    var account = accountRepository
+        .findById(id)
+        .orElseThrow(
+            () -> new WebException("用户不存在"));
     account.setPassword(passwd.toEncodedPassword());
 
     accountRepository.save(account);
