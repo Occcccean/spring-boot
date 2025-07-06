@@ -1,6 +1,7 @@
 package lingshin.meteor.web.service;
 
 import lingshin.meteor.web.repository.StudentRepository;
+import lingshin.meteor.web.DTO.StudentDTO;
 import lingshin.meteor.web.entity.Student;
 import lingshin.meteor.web.util.PredicateChainer;
 
@@ -20,33 +21,29 @@ public class StudentService {
     return studentRepository;
   }
 
-  public List<Student> search(
-      String name,
-      String sid,
-      String major,
-      String college,
-      String campus,
-      String gender,
-      String nation,
-      String country,
-      String mentorName) {
+  public List<StudentDTO> search(
+      StudentDTO student) {
     var search_condition = PredicateChainer
-        .<Student>ofField(sid, Student::getStudentId)
-        .mapChain(major, Student::getMajor)
-        .mapChain(college, Student::getCollege)
-        .mapChain(campus, Student::getCampus)
-        .mapChain(gender, Student::getGender)
-        .mapChain(country, Student::getCountry)
-        .mapChain(nation, Student::getNation)
-        .chain(name, stu -> stu.getName().contains(name))
-        .chain(mentorName, stu -> Optional
+        .<Student>ofField(student.studentId(), Student::getStudentId)
+        .mapChain(student.major(), Student::getMajor)
+        .mapChain(student.college(), Student::getCollege)
+        .mapChain(student.campus(), Student::getCampus)
+        .mapChain(student.gender(), Student::getGender)
+        .mapChain(student.country(), Student::getCountry)
+        .mapChain(student.nation(), Student::getNation)
+        .chain(student.name(), stu -> stu.getName().contains(student.name()))
+        .chain(student.mentor(), stu -> Optional
             .ofNullable(stu.getMentor())
-            .map(m -> m.getName().contains(mentorName))
+            .map(m -> m.getName().contains(student.mentor()))
             .orElse(false))
         .toPredicate();
     return studentRepository
         .findAll().stream()
         .filter(search_condition)
+        .map(stu -> student) // FIXME: bad code here
         .collect(Collectors.toList());
+  }
+
+  public void update(StudentDTO studentdDTO) {
   }
 }
